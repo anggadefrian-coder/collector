@@ -21,18 +21,19 @@ print("====================================", flush=True)
 print("INDODAX BTC/IDR COLLECTOR", flush=True)
 print("====================================", flush=True)
 
-# ==========================================
-# AMBIL DATA INDODAX
-# ==========================================
-
-req = urllib.request.Request(
-    URL,
-    headers={
-        "User-Agent": "Mozilla/5.0"
-    }
-)
-
 try:
+
+    # ======================================
+    # AMBIL DATA INDODAX
+    # ======================================
+
+    req = urllib.request.Request(
+        URL,
+        headers={
+            "User-Agent": "Mozilla/5.0"
+        }
+    )
+
     with urllib.request.urlopen(req, timeout=15) as response:
 
         print("HTTP STATUS:", response.status, flush=True)
@@ -121,11 +122,16 @@ try:
     print("DATA TERSIMPAN:", CSV_FILE, flush=True)
 
     # ======================================
-    # SIMPAN KE GITHUB
+    # KONFIGURASI GIT
     # ======================================
 
     subprocess.run(
-        ["git", "config", "user.name", "github-actions[bot]"],
+        [
+            "git",
+            "config",
+            "user.name",
+            "github-actions[bot]"
+        ],
         check=True
     )
 
@@ -139,15 +145,52 @@ try:
         check=True
     )
 
+    # ======================================
+    # SINKRONKAN DENGAN GITHUB
+    # ======================================
+
+    print("SINKRONISASI DENGAN GITHUB...", flush=True)
+
     subprocess.run(
-        ["git", "add", CSV_FILE],
+        [
+            "git",
+            "pull",
+            "--rebase",
+            "origin",
+            "main"
+        ],
         check=True
     )
 
-    # Cek apakah ada perubahan
-    result = subprocess.run(
-        ["git", "diff", "--cached", "--quiet"]
+    # ======================================
+    # ADD CSV
+    # ======================================
+
+    subprocess.run(
+        [
+            "git",
+            "add",
+            CSV_FILE
+        ],
+        check=True
     )
+
+    # ======================================
+    # CEK PERUBAHAN
+    # ======================================
+
+    result = subprocess.run(
+        [
+            "git",
+            "diff",
+            "--cached",
+            "--quiet"
+        ]
+    )
+
+    # ======================================
+    # COMMIT + PUSH
+    # ======================================
 
     if result.returncode != 0:
 
@@ -161,27 +204,33 @@ try:
             check=True
         )
 
-        # Ambil perubahan terbaru dari GitHub terlebih dahulu
-subprocess.run(
-    ["git", "pull", "--rebase", "origin", "main"],
-    check=True
-)
+        subprocess.run(
+            [
+                "git",
+                "push",
+                "origin",
+                "main"
+            ],
+            check=True
+        )
 
-# Setelah sinkron, push data terbaru
-subprocess.run(
-    ["git", "push", "origin", "main"],
-    check=True
-)
-
-        print("DATA BERHASIL DI-PUSH KE GITHUB", flush=True)
+        print(
+            "DATA BERHASIL DI-PUSH KE GITHUB",
+            flush=True
+        )
 
     else:
-        print("TIDAK ADA DATA BARU UNTUK DI-COMMIT", flush=True)
+
+        print(
+            "TIDAK ADA DATA BARU UNTUK DI-COMMIT",
+            flush=True
+        )
 
 except Exception as e:
 
     print("COLLECTOR GAGAL", flush=True)
     print("ERROR:", repr(e), flush=True)
+
     raise
 
 print("====================================", flush=True)
