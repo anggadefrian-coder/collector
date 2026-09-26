@@ -24,6 +24,49 @@ print("====================================", flush=True)
 try:
 
     # ======================================
+    # KONFIGURASI GIT
+    # ======================================
+
+    subprocess.run(
+        [
+            "git",
+            "config",
+            "user.name",
+            "github-actions[bot]"
+        ],
+        check=True
+    )
+
+    subprocess.run(
+        [
+            "git",
+            "config",
+            "user.email",
+            "41898282+github-actions[bot]@users.noreply.github.com"
+        ],
+        check=True
+    )
+
+    # ======================================
+    # SINKRONISASI DULU
+    # ======================================
+
+    print("SINKRONISASI DENGAN GITHUB...", flush=True)
+
+    subprocess.run(
+        [
+            "git",
+            "pull",
+            "--rebase",
+            "origin",
+            "main"
+        ],
+        check=True
+    )
+
+    print("GITHUB SUDAH TERKINI", flush=True)
+
+    # ======================================
     # AMBIL DATA INDODAX
     # ======================================
 
@@ -74,13 +117,13 @@ try:
     print("Vol   :", volume, flush=True)
 
     # ======================================
-    # BUAT FOLDER DATA
+    # BUAT FOLDER
     # ======================================
 
     os.makedirs("data", exist_ok=True)
 
     # ======================================
-    # CEK FILE CSV
+    # CEK FILE
     # ======================================
 
     file_baru = not os.path.exists(CSV_FILE)
@@ -122,48 +165,7 @@ try:
     print("DATA TERSIMPAN:", CSV_FILE, flush=True)
 
     # ======================================
-    # KONFIGURASI GIT
-    # ======================================
-
-    subprocess.run(
-        [
-            "git",
-            "config",
-            "user.name",
-            "github-actions[bot]"
-        ],
-        check=True
-    )
-
-    subprocess.run(
-        [
-            "git",
-            "config",
-            "user.email",
-            "41898282+github-actions[bot]@users.noreply.github.com"
-        ],
-        check=True
-    )
-
-    # ======================================
-    # SINKRONKAN DENGAN GITHUB
-    # ======================================
-
-    print("SINKRONISASI DENGAN GITHUB...", flush=True)
-
-    subprocess.run(
-        [
-            "git",
-            "pull",
-            "--rebase",
-            "origin",
-            "main"
-        ],
-        check=True
-    )
-
-    # ======================================
-    # ADD CSV
+    # GIT ADD
     # ======================================
 
     subprocess.run(
@@ -189,7 +191,7 @@ try:
     )
 
     # ======================================
-    # COMMIT + PUSH
+    # COMMIT DAN PUSH
     # ======================================
 
     if result.returncode != 0:
@@ -230,7 +232,6 @@ except Exception as e:
 
     print("COLLECTOR GAGAL", flush=True)
     print("ERROR:", repr(e), flush=True)
-
     raise
 
 print("====================================", flush=True)
