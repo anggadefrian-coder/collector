@@ -5,8 +5,9 @@ on:
   schedule:
     - cron: "*/15 * * * *"
 
-permissions:
-  contents: write
+concurrency:
+  group: btc-idr-collector
+  cancel-in-progress: false
 
 jobs:
   collector:
