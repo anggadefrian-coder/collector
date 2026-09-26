@@ -161,10 +161,17 @@ try:
             check=True
         )
 
-        subprocess.run(
-            ["git", "push"],
-            check=True
-        )
+        # Ambil perubahan terbaru dari GitHub terlebih dahulu
+subprocess.run(
+    ["git", "pull", "--rebase", "origin", "main"],
+    check=True
+)
+
+# Setelah sinkron, push data terbaru
+subprocess.run(
+    ["git", "push", "origin", "main"],
+    check=True
+)
 
         print("DATA BERHASIL DI-PUSH KE GITHUB", flush=True)
 
