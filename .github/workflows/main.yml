@@ -23,3 +23,6 @@ jobs:
 
       - name: Run collector
         run: python main.py
+
+      - name: Run OHLC 15m collector
+        run: python ohlc_15m.py
